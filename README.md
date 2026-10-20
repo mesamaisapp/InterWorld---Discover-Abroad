@@ -6,6 +6,9 @@
   e a contagem de pacotes ao vivo), destinos com preço "a partir de", "mesmo curso, preço diferente", itinerário e dúvidas.
 - **`/busca`** — resultados: cada curso é um bilhete com a agência mais barata no canhoto e as outras agências embaixo.
   Links antigos `/?destino=...` redirecionam para cá.
+- **`/guia`** — guia do primeiro intercâmbio: objetivos, países (entrada, trabalho e fonte oficial), calculadora do custo
+  total (o curso vem do catálogo), linha do tempo, checklist de documentos (salvo no navegador), perguntas para escola e
+  agência, ciladas e primeiras semanas. Conteúdo em `src/lib/guia.ts`; regras de visto mudam, revise com frequência.
 
 Identidade: cores da logo (marinho `#0b2551`, azul `#1565c0`, verde `#5cb746`), Montserrat (títulos) e Public Sans (texto),
 via `@fontsource-variable`. A logo está redesenhada em SVG em `src/components/marca/Logo.tsx`.

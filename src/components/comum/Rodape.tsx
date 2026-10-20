@@ -49,6 +49,11 @@ export function Rodape() {
                     Como funciona
                   </Link>
                 </li>
+                <li>
+                  <Link href="/guia" className="hover:underline">
+                    Guia do primeiro intercâmbio
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>

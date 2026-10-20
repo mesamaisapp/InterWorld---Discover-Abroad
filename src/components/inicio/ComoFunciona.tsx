@@ -51,6 +51,12 @@ export function ComoFunciona({ economiaMaxima }: { economiaMaxima: number }) {
           >
             Começar a comparar
           </Link>
+          <Link
+            href="/guia"
+            className="mt-4 block w-fit text-[1.0625rem] font-semibold underline-offset-4 hover:underline"
+          >
+            Primeira vez? Leia o guia completo →
+          </Link>
         </div>
 
         <div
