@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-fundo: #f6f7f9;
+  --color-superficie: #ffffff;
+  --color-borda: #e4e7ec;
+  --color-texto: #101828;
+  --color-suave: #667085;
+  --color-marca: #1d4ed8;
+  --color-marca-escura: #1e40af;
+  --color-destaque: #059669;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fundo: #0b0f17;
+    --color-superficie: #121826;
+    --color-borda: #243041;
+    --color-texto: #e6e9ef;
+    --color-suave: #98a2b3;
+    --color-marca: #3b82f6;
+    --color-marca-escura: #2563eb;
+    --color-destaque: #10b981;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-fundo font-sans text-texto antialiased;
+  }
+}
+
+@utility campo {
+  @apply w-full rounded-xl border border-borda bg-superficie px-3 py-2.5 text-sm outline-none focus:border-marca focus:ring-2 focus:ring-marca/20;
+}
