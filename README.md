@@ -1,6 +1,15 @@
-# Comparador de Intercâmbio (MVP)
+# InterWorld — discover abroad
 
 "Skyscanner para intercâmbio": compara pacotes de cursos de idioma (escola, destino, duração, agência) lado a lado.
+
+- **`/`** — página inicial: a busca é um cartão de embarque (escolher a cidade troca a foto, o código do aeroporto
+  e a contagem de pacotes ao vivo), destinos com preço "a partir de", "mesmo curso, preço diferente", itinerário e dúvidas.
+- **`/busca`** — resultados: cada curso é um bilhete com a agência mais barata no canhoto e as outras agências embaixo.
+  Links antigos `/?destino=...` redirecionam para cá.
+
+Identidade: cores da logo (marinho `#0b2551`, azul `#1565c0`, verde `#5cb746`), Montserrat (títulos) e Public Sans (texto),
+via `@fontsource-variable`. A logo está redesenhada em SVG em `src/components/marca/Logo.tsx`.
+Fotos das cidades: Wikimedia Commons, servidas pelo próprio Commons (`src/lib/destinos.ts`), créditos no rodapé.
 
 **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Supabase (PostgreSQL)
 
@@ -22,8 +31,10 @@ Sem `.env.local` o app usa os dados de exemplo de `src/lib/dados-exemplo.ts`. Pa
 src/
 ├── app/
 │   ├── layout.tsx                 # HTML raiz, fonte, metadata
-│   ├── page.tsx                   # Busca (Server Component): lê searchParams → consulta → renderiza
-│   ├── loading.tsx / error.tsx    # Esqueleto de streaming e fallback de erro
+│   ├── page.tsx                   # Página inicial (cartão de embarque, destinos, economia)
+│   ├── busca/page.tsx             # Busca (Server Component): lê searchParams → consulta → renderiza
+│   ├── busca/loading.tsx          # Esqueleto de streaming
+│   ├── error.tsx                  # Fallback de erro
 │   ├── globals.css                # Tailwind v4 + tokens de cor (@theme), modo escuro
 │   └── api/oferta/[id]/route.ts   # "Ver Oferta": registra o clique e redireciona ao link de afiliado
 ├── components/busca/
@@ -32,7 +43,11 @@ src/
 │   ├── SeletorOrdenacao.tsx       # (client)
 │   ├── GridResultados.tsx         # (server) grid + estado vazio + selo "Menor preço"
 │   └── CardPacote.tsx             # (server) card do pacote
+├── components/inicio/            # Seções da página inicial
+├── components/comum/             # Cabeçalho, rodapé, foto da cidade, número animado
 ├── lib/
+│   ├── destinos.ts                # Cidades: foto, código do aeroporto, frase (conteúdo editorial)
+│   ├── resumo.ts                  # "A partir de" por cidade e agrupamento do mesmo curso entre agências
 │   ├── catalogo.ts                # Camada de dados (única que fala com o banco) — server-only
 │   ├── filtros.ts                 # searchParams ⇄ FiltrosBusca (validação)
 │   ├── formatar.ts                # Moeda / semanas

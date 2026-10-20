@@ -1,23 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import "@fontsource-variable/montserrat";
+import "@fontsource-variable/public-sans";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
+import { Revelar } from "@/components/comum/Revelar";
 
 export const metadata: Metadata = {
-  title: "Comparador de Intercâmbio — compare cursos e agências",
+  title: "InterWorld — compare intercâmbios e embarque pagando menos",
   description:
-    "Compare preços de cursos de idioma no exterior entre agências parceiras: destino, duração, tipo de curso e acomodação.",
+    "Compare o mesmo curso de idioma, na mesma escola, entre várias agências de intercâmbio: Dublin, Malta, Toronto, Londres, Sydney e mais.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1d4ed8",
+  themeColor: "#0b2551",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={inter.variable}>
-      <body>{children}</body>
+    <html lang="pt-BR">
+      <body>
+        {children}
+        <Revelar />
+      </body>
     </html>
   );
 }

@@ -8,3 +8,4 @@ next-env.d.ts
 
 # Playwright MCP snapshots
 .playwright-mcp/
+.taste-skill/

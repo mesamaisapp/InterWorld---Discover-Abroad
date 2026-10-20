@@ -22,6 +22,7 @@ export function lerFiltros(params: SearchParams): FiltrosBusca {
 
   return {
     destino: primeiro(params.destino) || undefined,
+    cidade: primeiro(params.cidade) || undefined,
     semanas: inteiroPositivo(primeiro(params.semanas)),
     tipos,
     orcamentoMax: inteiroPositivo(primeiro(params.orcamento)),
@@ -34,6 +35,7 @@ export function lerFiltros(params: SearchParams): FiltrosBusca {
 export function filtrosParaQuery(filtros: FiltrosBusca) {
   const q = new URLSearchParams();
   if (filtros.destino) q.set("destino", filtros.destino);
+  if (filtros.cidade) q.set("cidade", filtros.cidade);
   if (filtros.semanas) q.set("semanas", String(filtros.semanas));
   if (filtros.tipos.length) q.set("tipo", filtros.tipos.join(","));
   if (filtros.orcamentoMax) q.set("orcamento", String(filtros.orcamentoMax));
@@ -45,6 +47,7 @@ export function filtrosParaQuery(filtros: FiltrosBusca) {
 export function contarFiltrosAtivos(filtros: FiltrosBusca) {
   return [
     filtros.destino,
+    filtros.cidade,
     filtros.semanas,
     filtros.tipos.length > 0,
     filtros.orcamentoMax,

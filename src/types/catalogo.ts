@@ -38,7 +38,10 @@ export interface PacoteBusca {
 export type Ordenacao = "preco" | "preco_semana" | "semanas";
 
 export interface FiltrosBusca {
+  /** slug do país */
   destino?: string;
+  /** slug da cidade (src/lib/destinos.ts) */
+  cidade?: string;
   semanas?: number;
   tipos: TipoCurso[];
   orcamentoMax?: number;
