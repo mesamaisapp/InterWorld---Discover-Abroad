@@ -5,3 +5,6 @@ out
 .env
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright MCP snapshots
+.playwright-mcp/

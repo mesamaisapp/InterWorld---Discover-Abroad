@@ -57,3 +57,8 @@ supabase/
 
 Página de detalhe da escola (todas as cotações dela), conversão EUR → BRL com câmbio do dia,
 painel admin para as agências subirem cotações, e paginação/infinite scroll quando o catálogo crescer.
+
+## Ferramentas do Claude Code
+
+- **Skills** em `.claude/skills/`: [Taste Skill](https://github.com/Leonxlnx/taste-skill) (`design-taste-frontend`), [Impeccable](https://github.com/pbakaus/impeccable) (`/impeccable`) e as skills do [Emil Kowalski](https://github.com/emilkowalski/skill) (`emil-design-eng`, `animate`, `review-animations` e outras).
+- **MCPs** em `.mcp.json`: Playwright (navegador headless, via `.claude/playwright-mcp.sh`) e Figma (`https://mcp.figma.com/mcp`, autentique com `/mcp` no Claude Code).
