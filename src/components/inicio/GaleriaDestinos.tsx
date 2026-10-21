@@ -20,8 +20,8 @@ export function GaleriaDestinos({ resumos }: { resumos: ResumoDestino[] }) {
             Para onde você vai?
           </h2>
           <p data-revelar style={{ "--i": 1 } as React.CSSProperties} className="max-w-[46ch] text-xl lg:justify-self-end">
-            {resumos.length} cidades, do mais barato por semana ao mais caro. O preço é o menor pacote que as
-            agências parceiras cotaram hoje.
+            {resumos.length} cidades, do mais barato por semana ao mais caro. O preço é o menor pacote encontrado
+            hoje, em agências parceiras e nos sites das escolas.
           </p>
         </div>
 

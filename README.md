@@ -76,6 +76,32 @@ supabase/
 Página de detalhe da escola (todas as cotações dela), conversão EUR → BRL com câmbio do dia,
 painel admin para as agências subirem cotações, e paginação/infinite scroll quando o catálogo crescer.
 
+## Coletor de preços (`coletor/`)
+
+Um robô que roda todo dia pelo GitHub Actions (`.github/workflows/coletor.yml`) e preenche o catálogo sozinho:
+
+1. Lê cada URL da tabela `fontes` (página ou PDF de preços de uma escola ou agência), respeitando o `robots.txt`.
+   Numa página HTML, segue até 2 PDFs de preço linkados nela.
+2. Se o conteúdo não mudou desde a última leitura (até 7 dias), só renova a data dos preços, sem chamar a IA.
+3. O Claude (`claude-opus-5-5`, troque com `COLETOR_MODELO`) extrai escola, cidade, curso, semanas, preço com as taxas
+   obrigatórias, moeda e acomodação, numa estrutura JSON garantida pela API.
+4. Cada oferta é conferida (`coletor/validar.ts`): país do catálogo, semanas inteiras, preço por semana entre €40 e €1.500
+   depois da conversão pelo câmbio do BCE. O que não passa é descartado e registrado.
+5. Grava no Supabase com `origem = 'coletado'`, a data (`visto_em`) e o trecho da fonte (`evidencia`). Preço que sumiu da
+   fonte sai do ar. Tabela oficial de escola vira a oferta "Escola (direto na escola)", para comparar com as agências.
+
+### Ativar
+
+1. Rode `supabase/migrations/0002_coletor.sql` no Supabase.
+2. Em GitHub → Settings → Secrets and variables → Actions, cadastre `ANTHROPIC_API_KEY`, `SUPABASE_URL` e
+   `SUPABASE_SERVICE_ROLE_KEY` (a service_role fica só no GitHub, nunca na Vercel nem no navegador). Opcional: a variável
+   `COLETOR_CONTATO` (e-mail que aparece no User-Agent do robô).
+3. Revise `coletor/fontes-iniciais.json` e importe: `npm run coletor -- --importar-fontes` (com as variáveis acima no ambiente).
+4. Em Actions → "Coletor de preços" → Run workflow, rode a primeira vez e confira o log e a tabela `coletas`.
+
+Para testar uma URL sem gravar nada: `npm run coletor -- --url <endereço> --seco` (precisa só da `ANTHROPIC_API_KEY`).
+Testes das regras de conferência: `npm test`.
+
 ## Ferramentas do Claude Code
 
 - **Skills** em `.claude/skills/`: [Taste Skill](https://github.com/Leonxlnx/taste-skill) (`design-taste-frontend`), [Impeccable](https://github.com/pbakaus/impeccable) (`/impeccable`) e as skills do [Emil Kowalski](https://github.com/emilkowalski/skill) (`emil-design-eng`, `animate`, `review-animations` e outras).

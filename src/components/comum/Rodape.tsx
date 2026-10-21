@@ -74,7 +74,7 @@ export function Rodape() {
         </div>
 
         <div className="mt-16 flex flex-wrap items-center justify-between gap-4 text-[0.9375rem] text-white/85">
-          <p>© {new Date().getFullYear()} InterWorld · discover abroad. Preços informados pelas agências parceiras.</p>
+          <p>© {new Date().getFullYear()} InterWorld · discover abroad. Preços das agências parceiras e dos sites oficiais das escolas.</p>
           <a href="#" className="hover:text-white">
             Voltar ao topo ↑
           </a>

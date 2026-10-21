@@ -4,6 +4,8 @@ import { formatarEuro, formatarSemanas } from "@/lib/formatar";
 import type { GrupoOferta } from "@/lib/resumo";
 import { ROTULO_TIPO_CURSO } from "@/types/catalogo";
 
+const DATA = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" });
+
 /**
  * Um curso como bilhete: foto da cidade, a escola, e no canhoto o preço da agência mais barata.
  * As outras agências que cotam o mesmo curso aparecem embaixo, com quanto custam a mais.
@@ -50,6 +52,11 @@ export function CardPacote({ grupo, menorPreco }: { grupo: GrupoOferta; menorPre
         </ul>
         <p className="text-[0.9375rem]">
           Melhor preço com <strong>{pacote.agencia_nome}</strong>
+          {pacote.origem === "coletado" && pacote.visto_em && (
+            <span className="block text-suave">
+              Preço visto em {DATA.format(new Date(pacote.visto_em))} no site oficial
+            </span>
+          )}
         </p>
         {outras.length > 0 && (
           <ul className="numeros mt-auto flex flex-col gap-1 text-[0.9375rem] text-suave">

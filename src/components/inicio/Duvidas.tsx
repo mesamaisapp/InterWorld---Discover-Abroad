@@ -4,7 +4,7 @@ const DUVIDAS = [
     aba: "Preço",
     pergunta: "A InterWorld cobra alguma taxa?",
     resposta:
-      "Não. Você paga à agência exatamente o preço que aparece aqui. Nós recebemos uma comissão da agência quando você fecha pelo nosso link — por isso o comparador é gratuito.",
+      "Não. Você paga à escola ou à agência o preço que aparece aqui. Quando você fecha com uma agência parceira pelo nosso link, ela nos paga uma comissão — por isso o comparador é gratuito.",
   },
   {
     aba: "Compra",

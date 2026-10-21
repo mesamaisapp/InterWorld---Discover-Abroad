@@ -1,0 +1,49 @@
+name: Coletor de preços
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # todo dia às 06:17 UTC (03:17 em Brasília)
+  workflow_dispatch:
+    inputs:
+      limite:
+        description: "Máximo de fontes nesta execução"
+        default: "50"
+
+concurrency:
+  group: coletor
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      COLETOR_CONTATO: ${{ vars.COLETOR_CONTATO }}
+      LIMITE: ${{ inputs.limite || '50' }}
+    steps:
+      - name: Conferir segredos
+        id: segredos
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ] || [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::notice::Coletor não configurado: cadastre ANTHROPIC_API_KEY, SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY em Settings → Secrets and variables → Actions."
+            echo "pronto=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "pronto=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.segredos.outputs.pronto == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.segredos.outputs.pronto == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        if: steps.segredos.outputs.pronto == 'true'
+      - run: npm test
+        if: steps.segredos.outputs.pronto == 'true'
+      - name: Coletar
+        if: steps.segredos.outputs.pronto == 'true'
+        run: npm run coletor -- --limite "$LIMITE"

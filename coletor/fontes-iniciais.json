@@ -1,0 +1,55 @@
+{
+  "_comentario": "Primeiras páginas de preço oficiais encontradas em 21/10/2026. Revise antes de ativar: confira se o site permite a leitura (termos de uso) e se a URL é a tabela atual. `npm run coletor -- --importar-fontes` grava esta lista na tabela `fontes`.",
+  "fontes": [
+    {
+      "url": "https://atlaslanguageschool.com/wp-content/uploads/2026/03/Atlas-Language-School-Price-List-2026-v4-Dec-2025.pdf",
+      "tipo": "escola",
+      "nome": "Atlas Language School",
+      "pais_slug": "irlanda",
+      "cidade": "Dublin",
+      "observacoes": "PDF com a tabela 2026; a URL muda a cada versão."
+    },
+    {
+      "url": "https://www.gci.ie/brochures-fees/",
+      "tipo": "escola",
+      "nome": "Galway Cultural Institute",
+      "pais_slug": "irlanda",
+      "cidade": "Galway",
+      "observacoes": "Página que linka o PDF de preços do ano; o coletor segue o link."
+    },
+    {
+      "url": "https://www.ihmalta.com/en/prices/",
+      "tipo": "escola",
+      "nome": "IH Malta",
+      "pais_slug": "malta",
+      "cidade": "St Julian's"
+    },
+    {
+      "url": "https://www.ilsc.com/hubfs/pricing/official-pricelists/2026-ilsc-greystone-college-global-official-pricing.pdf",
+      "tipo": "escola",
+      "nome": "ILSC Language Schools",
+      "observacoes": "Uma tabela para várias cidades (Toronto, Vancouver, Sydney, Dublin...), cada país na sua moeda."
+    },
+    {
+      "url": "https://www.kingseducation.com/learn-english/fees",
+      "tipo": "escola",
+      "nome": "Kings Education",
+      "pais_slug": "reino-unido",
+      "observacoes": "Página com tabelas por escola (Oxford, Londres, Bournemouth...) e link para o PDF."
+    },
+    {
+      "url": "https://www.donquijote.org/download/prices",
+      "tipo": "escola",
+      "nome": "Don Quijote",
+      "pais_slug": "espanha",
+      "observacoes": "Tabela única para as escolas da rede; o preço vale para todas as cidades."
+    },
+    {
+      "url": "https://www.navitasenglish.edu.au/wp-content/uploads/tuition-fees-2026.pdf",
+      "tipo": "escola",
+      "nome": "Navitas English",
+      "pais_slug": "australia",
+      "observacoes": "PDF 2026 com Sydney e outras cidades; preços em AUD."
+    }
+  ]
+}

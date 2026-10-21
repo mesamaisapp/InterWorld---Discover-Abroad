@@ -33,6 +33,9 @@ export interface PacoteBusca {
   agencia_id: string;
   agencia_nome: string;
   agencia_logo_url: string | null;
+  /** 'coletado' = lido do site da escola ou agência pelo coletor (coletor/) */
+  origem?: "parceiro" | "coletado";
+  visto_em?: string | null;
 }
 
 export type Ordenacao = "preco" | "preco_semana" | "semanas";
