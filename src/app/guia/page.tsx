@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Cabecalho } from "@/components/comum/Cabecalho";
 import { FotoCidade } from "@/components/comum/FotoCidade";
+import { KitResumo } from "@/components/comum/KitResumo";
 import { Rodape } from "@/components/comum/Rodape";
 import { Calculadora } from "@/components/guia/Calculadora";
 import { ChecklistDocumentos } from "@/components/guia/ChecklistDocumentos";
@@ -197,6 +198,7 @@ export default async function PaginaGuia() {
                 <p>Chegue alguns dias antes da aula para acertar chip, transporte e o caminho até a escola.</p>
               </li>
             </ol>
+            <KitResumo titulo="O que comprar além do curso" />
           </Capitulo>
 
           {/* 5 */}

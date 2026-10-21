@@ -4,7 +4,7 @@ import { Logo } from "@/components/marca/Logo";
 const LINKS = [
   { href: "/#destinos", rotulo: "Destinos" },
   { href: "/cotacao", rotulo: "Receber cotações" },
-  { href: "/#como-funciona", rotulo: "Como funciona" },
+  { href: "/kit", rotulo: "Kit do intercambista" },
   { href: "/guia", rotulo: "Guia do 1º intercâmbio" },
 ];
 

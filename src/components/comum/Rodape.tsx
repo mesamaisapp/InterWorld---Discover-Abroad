@@ -54,6 +54,11 @@ export function Rodape() {
                     Guia do primeiro intercâmbio
                   </Link>
                 </li>
+                <li>
+                  <Link href="/kit" className="hover:underline">
+                    Kit do intercambista
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>

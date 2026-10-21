@@ -53,8 +53,9 @@ export default async function PaginaCotacao({ searchParams }: { searchParams: Pr
 
   // Vindo de um bilhete da busca, o formulário já chega preenchido
   const cidade = pacote ? destinoDaCidade(pacote.escola_cidade) : destinoPorSlug(primeiro(params.cidade));
+  const pais = pacote?.pais_slug ?? faixas.paises.find((p) => p.slug === primeiro(params.destino))?.slug;
   const inicial: Record<string, string> = {
-    destino: cidade ? `cidade:${cidade.slug}` : pacote ? `pais:${pacote.pais_slug}` : "",
+    destino: cidade ? `cidade:${cidade.slug}` : pais ? `pais:${pais}` : "",
     tipo: pacote?.tipo_curso ?? primeiro(params.tipo) ?? "",
     semanas: pacote ? String(pacote.semanas) : (primeiro(params.semanas) ?? ""),
     pacote: pacote?.id ?? "",

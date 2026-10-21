@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cabecalho } from "@/components/comum/Cabecalho";
+import { KitResumo } from "@/components/comum/KitResumo";
 import { buscarPacotes } from "@/lib/catalogo";
 import { AGENCIAS_POR_PEDIDO, descreverPedido, primeiroNome } from "@/lib/cotacoes/fluxo";
 import { repo } from "@/lib/cotacoes/repositorio";
@@ -181,6 +182,10 @@ export default async function PaginaSuasCotacoes({ params }: { params: Promise<{
               ))}
             </ul>
           </section>
+
+          {pedido.status !== "recusado" && (
+            <KitResumo titulo="Enquanto isso, o resto da viagem" destino={pedido.pais_slug} />
+          )}
         </main>
       </div>
     </>

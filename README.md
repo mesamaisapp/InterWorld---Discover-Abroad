@@ -38,6 +38,7 @@ src/
 │   ├── busca/page.tsx             # Busca (Server Component): lê searchParams → consulta → renderiza
 │   ├── busca/loading.tsx          # Esqueleto de streaming
 │   ├── guia/page.tsx              # Guia do primeiro intercâmbio
+│   ├── kit/page.tsx               # Kit do intercambista (links de afiliado)
 │   ├── cotacao/                   # Pedido de cotação e página do aluno (/cotacao/[token])
 │   ├── responder/[token]/         # Página da agência para responder
 │   ├── admin/cotacoes/            # Painel de revisão (ADMIN_SENHA)
@@ -147,6 +148,16 @@ aceito fica gravado em cada pedido (LGPD, e depois GDPR).
      [Resend](https://resend.com)).
    - `SITE_URL` (ex.: `https://interworld.com.br`), usado nos links dos e-mails.
    - Opcional: `REVISAO_MANUAL=false` para envio automático.
+
+## Kit do intercambista (`/kit`)
+
+Passagem, seguro, conta internacional, hospedagem e chip: o que se compra além do curso, na ordem e com o que conferir.
+Com `?destino=irlanda` (ou outro país), mostra a exigência de seguro daquele país. Aparece também no guia e na página de
+cotações do aluno. O conteúdo fica em `src/lib/kit.ts`.
+
+**Ganhar com ele:** cadastre-se no programa de afiliados de cada parceiro e coloque o link na Vercel como
+`KIT_LINK_<ID>` (ex.: `KIT_LINK_SEGUROS_PROMO`, `KIT_LINK_WISE`; a lista está no `.env.example`). Sem a variável, o
+botão leva ao site normal do parceiro. Os links saem com `rel="sponsored"` e a página avisa que podem render comissão.
 
 ## Ferramentas do Claude Code
 
