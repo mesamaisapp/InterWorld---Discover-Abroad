@@ -4,7 +4,7 @@ export type SearchParams = Record<string, string | string[] | undefined>;
 
 const ORDENACOES: Ordenacao[] = ["preco", "preco_semana", "semanas"];
 
-function primeiro(valor: string | string[] | undefined) {
+export function primeiro(valor: string | string[] | undefined) {
   return Array.isArray(valor) ? valor[0] : valor;
 }
 

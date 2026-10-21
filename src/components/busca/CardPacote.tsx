@@ -17,7 +17,7 @@ export function CardPacote({ grupo, menorPreco }: { grupo: GrupoOferta; menorPre
   return (
     <article
       data-ui
-      className="group bilhete-em-pe sm:bilhete grid w-full bg-superficie [--corte-y:calc(100%-152px)] sm:grid-cols-[minmax(150px,26%)_1fr_4px_208px] sm:[--corte:calc(100%-210px)]"
+      className="group bilhete-em-pe sm:bilhete grid w-full bg-superficie [--corte-y:calc(100%-184px)] sm:grid-cols-[minmax(150px,26%)_1fr_4px_208px] sm:[--corte:calc(100%-210px)]"
     >
       <div className="relative overflow-hidden">
         {destino ? (
@@ -99,18 +99,27 @@ export function CardPacote({ grupo, menorPreco }: { grupo: GrupoOferta; menorPre
           </p>
           <p className="numeros mt-1 text-[0.9375rem] text-suave">{formatarEuro(pacote.preco_semana_eur)} por semana</p>
         </div>
-        <a
-          href={`/api/oferta/${pacote.id}`}
-          target="_blank"
-          rel="sponsored noopener"
-          className="flex h-12 items-center justify-center rounded-full bg-marca-escura px-5 font-semibold text-white transition-[background-color,scale] duration-200 hover:bg-marca active:scale-[0.97]"
-        >
-          Ver oferta
-          <span className="sr-only">
-            {" "}
-            de {pacote.agencia_nome} para {pacote.escola_nome} (abre em nova aba)
-          </span>
-        </a>
+        <div className="flex flex-col gap-2">
+          <a
+            href={`/cotacao?pacote=${pacote.id}`}
+            className="flex h-12 items-center justify-center rounded-full bg-marca-escura px-5 font-semibold text-white transition-[background-color,scale] duration-200 hover:bg-marca active:scale-[0.97]"
+          >
+            Receber cotações
+            <span className="sr-only"> para {pacote.escola_nome}</span>
+          </a>
+          <a
+            href={`/api/oferta/${pacote.id}`}
+            target="_blank"
+            rel="sponsored noopener"
+            className="text-center text-[0.9375rem] font-semibold text-marca underline-offset-2 hover:underline"
+          >
+            Ver na fonte
+            <span className="sr-only">
+              {" "}
+              ({pacote.agencia_nome}, abre em nova aba)
+            </span>
+          </a>
+        </div>
       </div>
     </article>
   );

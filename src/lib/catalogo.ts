@@ -86,6 +86,15 @@ export async function buscarPacote(id: string) {
   return data;
 }
 
+/** Um pacote completo pelo id (formulário de cotação que vem de um bilhete). */
+export async function buscarPacoteCompleto(id: string): Promise<PacoteBusca | null> {
+  if (!id) return null;
+  const supabase = supabaseServidor();
+  if (!supabase) return PACOTES_EXEMPLO.find((p) => p.id === id) ?? null;
+  const { data } = await supabase.from("pacotes_busca").select("*").eq("id", id).maybeSingle();
+  return data ? normalizar([data])[0] : null;
+}
+
 export async function registrarClique(pacoteId: string, referer: string | null, userAgent: string | null) {
   const supabase = supabaseServidor();
   if (!supabase) return;

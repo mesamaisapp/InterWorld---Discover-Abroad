@@ -37,6 +37,10 @@ src/
 │   ├── page.tsx                   # Página inicial (cartão de embarque, destinos, economia)
 │   ├── busca/page.tsx             # Busca (Server Component): lê searchParams → consulta → renderiza
 │   ├── busca/loading.tsx          # Esqueleto de streaming
+│   ├── guia/page.tsx              # Guia do primeiro intercâmbio
+│   ├── cotacao/                   # Pedido de cotação e página do aluno (/cotacao/[token])
+│   ├── responder/[token]/         # Página da agência para responder
+│   ├── admin/cotacoes/            # Painel de revisão (ADMIN_SENHA)
 │   ├── error.tsx                  # Fallback de erro
 │   ├── globals.css                # Tailwind v4 + tokens de cor (@theme), modo escuro
 │   └── api/oferta/[id]/route.ts   # "Ver Oferta": registra o clique e redireciona ao link de afiliado
@@ -51,6 +55,8 @@ src/
 ├── lib/
 │   ├── destinos.ts                # Cidades: foto, código do aeroporto, frase (conteúdo editorial)
 │   ├── resumo.ts                  # "A partir de" por cidade e agrupamento do mesmo curso entre agências
+│   ├── cotacoes/                  # Triagem, distribuição, e-mail, repositório (Supabase ou memória)
+│   ├── mercados.ts                # Países de origem: idioma, moeda, DDI
 │   ├── catalogo.ts                # Camada de dados (única que fala com o banco) — server-only
 │   ├── filtros.ts                 # searchParams ⇄ FiltrosBusca (validação)
 │   ├── formatar.ts                # Moeda / semanas
@@ -94,13 +100,53 @@ Um robô que roda todo dia pelo GitHub Actions (`.github/workflows/coletor.yml`)
 
 1. Rode `supabase/migrations/0002_coletor.sql` no Supabase.
 2. Em GitHub → Settings → Secrets and variables → Actions, cadastre `ANTHROPIC_API_KEY`, `SUPABASE_URL` e
-   `SUPABASE_SERVICE_ROLE_KEY` (a service_role fica só no GitHub, nunca na Vercel nem no navegador). Opcional: a variável
+   `SUPABASE_SERVICE_ROLE_KEY` (nunca no navegador: nada de `NEXT_PUBLIC_` nela). Opcional: a variável
    `COLETOR_CONTATO` (e-mail que aparece no User-Agent do robô).
 3. Revise `coletor/fontes-iniciais.json` e importe: `npm run coletor -- --importar-fontes` (com as variáveis acima no ambiente).
 4. Em Actions → "Coletor de preços" → Run workflow, rode a primeira vez e confira o log e a tabela `coletas`.
 
 Para testar uma URL sem gravar nada: `npm run coletor -- --url <endereço> --seco` (precisa só da `ANTHROPIC_API_KEY`).
 Testes das regras de conferência: `npm test`.
+
+## Cotações (`/cotacao`)
+
+O aluno pede uma cotação e até 3 agências parceiras respondem com preço e o que está incluso. O aluno compara tudo numa
+página só dele.
+
+1. **Pedido**: `/cotacao` (ou "Receber cotações" num bilhete da busca, que já chega preenchido). O pedido ganha uma
+   nota de triagem de 0 a 100 (`src/lib/cotacoes/triagem.ts`: WhatsApp válido, data de início, link nas observações…)
+   e fica `aguardando_revisao`. O aluno recebe o link secreto `/cotacao/{token}` para acompanhar.
+2. **Revisão**: em `/admin/cotacoes` você vê os pedidos pela nota e clica em "Aprovar e enviar" ou "Recusar".
+   Com `REVISAO_MANUAL=false`, pedidos com nota 70 ou mais vão direto, e só os outros esperam por você.
+3. **Distribuição**: as 3 agências com `recebe_cotacoes = true` que atendem o mercado do aluno e o país de destino
+   (`destinos` vazio = todos), em rodízio (quem recebeu há mais tempo vem primeiro). Cada uma recebe um e-mail com o
+   link `/responder/{token}`, só com o primeiro nome e o resumo do pedido.
+4. **Resposta**: a agência informa moeda, preço total, o que inclui, validade e WhatsApp. O contato completo do aluno
+   só aparece depois que ela responde. O aluno recebe um e-mail na primeira proposta (se deixou e-mail).
+5. **Comparação**: na página do aluno, as propostas vêm ordenadas por preço, com o selo "Menor preço", quanto ele
+   economiza e um botão de WhatsApp para cada agência. O admin mostra quantos pedidos cada agência recebeu e respondeu
+   no mês (base para cobrar por lead).
+
+Sem `SUPABASE_SERVICE_ROLE_KEY`, tudo roda em **modo demonstração**: os pedidos ficam na memória do servidor, com 4
+agências de exemplo, e o painel fica aberto. Sem `RESEND_API_KEY`, os e-mails só vão para o log e o painel mostra os
+links para enviar à mão.
+
+**Pronto para outros países**: pedido e agência têm `mercado` (hoje só `br`, em `src/lib/mercados.ts`, com idioma,
+moeda e DDI). Para abrir outro país, cadastre o mercado lá e nas agências (`mercados`). O texto de consentimento
+aceito fica gravado em cada pedido (LGPD, e depois GDPR).
+
+### Ativar
+
+1. Rode `supabase/migrations/0003_cotacoes.sql` no Supabase.
+2. Para cada agência parceira, preencha na tabela `agencias`: `email`, `recebe_cotacoes = true`, `mercados` (ex.:
+   `{br}`) e, se ela não atende todos os destinos, `destinos` (slugs de país, ex.: `{irlanda,malta}`).
+3. Na Vercel (Settings → Environment Variables), cadastre:
+   - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`: os pedidos guardam contato do aluno, então só o servidor lê e grava.
+   - `ADMIN_SENHA`: a senha do painel `/admin/cotacoes`.
+   - `RESEND_API_KEY` e `EMAIL_REMETENTE` (ex.: `InterWorld <cotacoes@seudominio.com>`, com o domínio verificado no
+     [Resend](https://resend.com)).
+   - `SITE_URL` (ex.: `https://interworld.com.br`), usado nos links dos e-mails.
+   - Opcional: `REVISAO_MANUAL=false` para envio automático.
 
 ## Ferramentas do Claude Code
 
