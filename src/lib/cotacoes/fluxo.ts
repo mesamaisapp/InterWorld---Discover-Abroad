@@ -4,6 +4,7 @@ import { repo } from "@/lib/cotacoes/repositorio";
 import type { Pedido, Resposta } from "@/lib/cotacoes/tipos";
 import { destinoPorSlug } from "@/lib/destinos";
 import { formatarSemanas } from "@/lib/formatar";
+import { PAISES } from "@/lib/guia";
 import { ROTULO_TIPO_CURSO } from "@/types/catalogo";
 
 export const AGENCIAS_POR_PEDIDO = 3;
@@ -24,7 +25,7 @@ export function descreverInicio(inicio: string | null) {
 
 export function descreverPedido(p: Pick<Pedido, "cidade" | "pais_slug" | "tipo_curso" | "semanas" | "inicio">) {
   return [
-    p.cidade ?? `qualquer cidade (${p.pais_slug})`,
+    p.cidade ?? `qualquer cidade (${PAISES.find((x) => x.slug === p.pais_slug)?.nome ?? p.pais_slug})`,
     p.tipo_curso ? ROTULO_TIPO_CURSO[p.tipo_curso] : "curso em aberto",
     p.semanas ? formatarSemanas(p.semanas) : "duração em aberto",
     `início ${descreverInicio(p.inicio)}`,

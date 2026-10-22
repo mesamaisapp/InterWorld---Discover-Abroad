@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { buscarPacoteCompleto } from "@/lib/catalogo";
 import { distribuir, NOTA_ENVIO_AUTOMATICO, revisaoManual } from "@/lib/cotacoes/fluxo";
@@ -9,6 +10,7 @@ import { TEXTO_CONSENTIMENTO } from "@/lib/cotacoes/textos";
 import type { NovoPedido } from "@/lib/cotacoes/tipos";
 import { DESTINOS, destinoPorSlug } from "@/lib/destinos";
 import { MERCADO_PADRAO } from "@/lib/mercados";
+import { COOKIE_ORIGEM, lerOrigem } from "@/lib/metricas/origem";
 import { TIPOS_CURSO, type TipoCurso } from "@/types/catalogo";
 
 export interface EstadoPedido {
@@ -55,6 +57,7 @@ export async function pedirCotacao(_anterior: EstadoPedido, form: FormData): Pro
   if (Object.keys(erros).length) return { erros, valores };
 
   const pacoteValido = pacote && (await buscarPacoteCompleto(pacote)) ? pacote : null;
+  const origem = lerOrigem((await cookies()).get(COOKIE_ORIGEM)?.value);
   const novo: NovoPedido = {
     mercado: MERCADO_PADRAO.slug,
     nome,
@@ -68,6 +71,8 @@ export async function pedirCotacao(_anterior: EstadoPedido, form: FormData): Pro
     observacoes,
     pacote_id: pacoteValido,
     consentimento_texto: TEXTO_CONSENTIMENTO,
+    origem: origem?.origem ?? null,
+    campanha: origem?.campanha ?? null,
   };
 
   const triagem = triar(novo);

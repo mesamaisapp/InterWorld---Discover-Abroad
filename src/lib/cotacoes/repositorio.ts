@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import type {
   AgenciaCotacao,
   DadosResposta,
+  Desfecho,
   NovoPedido,
   Pedido,
   Resposta,
@@ -36,6 +37,11 @@ export interface Repositorio {
   respostaPorToken(token: string): Promise<Resposta | null>;
   salvarResposta(token: string, dados: DadosResposta): Promise<Resposta | null>;
   resumoDoMes(inicioDoMes: Date): Promise<ResumoAgencia[]>;
+  /** O aluno conta se fechou e com qual proposta */
+  registrarDesfecho(pedido_id: string, desfecho: Desfecho, resposta_id: string | null): Promise<void>;
+  /** Para o painel de métricas */
+  pedidosDesde(data: Date): Promise<Pedido[]>;
+  respostasDesde(data: Date): Promise<Resposta[]>;
 }
 
 let repositorio: Repositorio | undefined;
@@ -156,6 +162,25 @@ function repoSupabase(url: string, chave: string): Repositorio {
       );
       return resumir(linhas.map(paraResposta));
     },
+
+    async registrarDesfecho(pedido_id, desfecho, resposta_id) {
+      await exigir(
+        db
+          .from("pedidos_cotacao")
+          .update({ desfecho, desfecho_resposta_id: resposta_id, desfecho_em: new Date().toISOString() })
+          .eq("id", pedido_id),
+      );
+    },
+
+    pedidosDesde: (data) =>
+      exigir<Pedido[]>(db.from("pedidos_cotacao").select().gte("criado_em", data.toISOString()).limit(10_000)),
+
+    async respostasDesde(data) {
+      const linhas = await exigir<(Record<string, unknown> & { agencias: { nome: string } })[]>(
+        db.from("respostas_cotacao").select(comAgencia).gte("enviado_em", data.toISOString()).limit(30_000),
+      );
+      return linhas.map(paraResposta);
+    },
   };
 }
 
@@ -225,6 +250,9 @@ function repoMemoria(): Repositorio {
         status,
         criado_em: agora(),
         revisado_em: null,
+        desfecho: null,
+        desfecho_resposta_id: null,
+        desfecho_em: null,
       };
       m.pedidos.unshift(pedido);
       return pedido;
@@ -278,6 +306,13 @@ function repoMemoria(): Repositorio {
     },
 
     resumoDoMes: async (inicioDoMes) => resumir(m.respostas.filter((r) => new Date(r.enviado_em) >= inicioDoMes)),
+
+    async registrarDesfecho(pedido_id, desfecho, resposta_id) {
+      const p = m.pedidos.find((x) => x.id === pedido_id);
+      if (p) Object.assign(p, { desfecho, desfecho_resposta_id: resposta_id, desfecho_em: agora() });
+    },
+    pedidosDesde: async (data) => m.pedidos.filter((p) => new Date(p.criado_em) >= data),
+    respostasDesde: async (data) => m.respostas.filter((r) => new Date(r.enviado_em) >= data),
   };
 }
 

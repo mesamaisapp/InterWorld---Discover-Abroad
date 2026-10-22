@@ -6,7 +6,7 @@ import { Rodape } from "@/components/comum/Rodape";
 import { destinoPorSlug } from "@/lib/destinos";
 import { primeiro, type SearchParams } from "@/lib/filtros";
 import { PAISES } from "@/lib/guia";
-import { AVISO_PARCEIROS, KIT, linkDoParceiro, SEGURO_POR_PAIS } from "@/lib/kit";
+import { AVISO_PARCEIROS, KIT, SEGURO_POR_PAIS } from "@/lib/kit";
 
 export const metadata: Metadata = {
   title: "Kit do intercambista — InterWorld",
@@ -116,7 +116,7 @@ export default async function PaginaKit({ searchParams }: { searchParams: Promis
                     {item.parceiros.map((p) => (
                       <li key={p.id}>
                         <a
-                          href={linkDoParceiro(p)}
+                          href={`/api/parceiro/${p.id}`}
                           target="_blank"
                           rel="sponsored noopener"
                           className="group flex h-full flex-col gap-1 bg-superficie p-4 transition-colors duration-200 hover:bg-white"

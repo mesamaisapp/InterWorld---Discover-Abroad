@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cabecalho } from "@/components/comum/Cabecalho";
+import { JaFechou } from "@/app/cotacao/[token]/JaFechou";
 import { KitResumo } from "@/components/comum/KitResumo";
 import { buscarPacotes } from "@/lib/catalogo";
 import { AGENCIAS_POR_PEDIDO, descreverPedido, primeiroNome } from "@/lib/cotacoes/fluxo";
@@ -182,6 +183,8 @@ export default async function PaginaSuasCotacoes({ params }: { params: Promise<{
               ))}
             </ul>
           </section>
+
+          {prontas.length > 0 && <JaFechou pedido={pedido} propostas={prontas} />}
 
           {pedido.status !== "recusado" && (
             <KitResumo titulo="Enquanto isso, o resto da viagem" destino={pedido.pais_slug} />

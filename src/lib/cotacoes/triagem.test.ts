@@ -18,6 +18,8 @@ const completo: NovoPedido = {
   observacoes: null,
   pacote_id: null,
   consentimento_texto: "ok",
+  origem: null,
+  campanha: null,
 };
 
 test("WhatsApp brasileiro ganha DDI e é validado", () => {

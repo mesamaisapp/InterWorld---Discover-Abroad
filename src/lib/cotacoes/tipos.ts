@@ -20,7 +20,12 @@ export interface NovoPedido {
   observacoes: string | null;
   pacote_id: string | null;
   consentimento_texto: string;
+  /** De onde o aluno veio (utm_source ou site), para medir cada canal */
+  origem: string | null;
+  campanha: string | null;
 }
+
+export type Desfecho = "fechou" | "ainda_nao" | "desistiu";
 
 export interface Pedido extends NovoPedido {
   id: string;
@@ -29,6 +34,9 @@ export interface Pedido extends NovoPedido {
   status: StatusPedido;
   criado_em: string;
   revisado_em: string | null;
+  desfecho: Desfecho | null;
+  desfecho_resposta_id: string | null;
+  desfecho_em: string | null;
 }
 
 export interface AgenciaCotacao {

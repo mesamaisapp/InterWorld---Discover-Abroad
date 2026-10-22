@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/montserrat";
 import "@fontsource-variable/public-sans";
 import "./globals.css";
+import { Rastreio } from "@/components/comum/Rastreio";
 import { Revelar } from "@/components/comum/Revelar";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <Revelar />
+        <Rastreio />
       </body>
     </html>
   );

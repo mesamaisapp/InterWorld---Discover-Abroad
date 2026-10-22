@@ -1,5 +1,5 @@
 {
-  "_comentario": "Primeiras páginas de preço oficiais encontradas em 21/10/2026. Revise antes de ativar: confira se o site permite a leitura (termos de uso) e se a URL é a tabela atual. `npm run coletor -- --importar-fontes` grava esta lista na tabela `fontes`.",
+  "_comentario": "Primeiras páginas de preço oficiais encontradas em 21/10/2026; escolas de Dublin (piloto da Fase 1) ampliadas em 22/10/2026. Revise antes de ativar: confira se o site permite a leitura (termos de uso) e se a URL é a tabela atual. `npm run coletor -- --importar-fontes` grava esta lista na tabela `fontes`.",
   "fontes": [
     {
       "url": "https://atlaslanguageschool.com/wp-content/uploads/2026/03/Atlas-Language-School-Price-List-2026-v4-Dec-2025.pdf",
@@ -8,6 +8,30 @@
       "pais_slug": "irlanda",
       "cidade": "Dublin",
       "observacoes": "PDF com a tabela 2026; a URL muda a cada versão."
+    },
+    {
+      "url": "https://www.ilsc.com/language-schools/price-list/dublin",
+      "tipo": "escola",
+      "nome": "ILSC Dublin",
+      "pais_slug": "irlanda",
+      "cidade": "Dublin",
+      "observacoes": "Página de preços só de Dublin; mais precisa que a tabela global da ILSC."
+    },
+    {
+      "url": "https://studyinireland.ie/en/isi-dublin-fees/",
+      "tipo": "escola",
+      "nome": "ISI Dublin",
+      "pais_slug": "irlanda",
+      "cidade": "Dublin",
+      "observacoes": "Tabela de cursos de 25 semanas para fora da UE (estudo e trabalho), com taxas e seguro; a página não mostra o ano."
+    },
+    {
+      "url": "https://everestlanguageschool.com/?p=7",
+      "tipo": "escola",
+      "nome": "Everest Language School",
+      "pais_slug": "irlanda",
+      "cidade": "Dublin",
+      "observacoes": "Lista de preços 2026, com o programa de 25 semanas de estudo e trabalho."
     },
     {
       "url": "https://www.gci.ie/brochures-fees/",

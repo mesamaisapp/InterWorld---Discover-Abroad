@@ -20,7 +20,7 @@ export function Rodape() {
               {DESTINOS.map((d) => (
                 <li key={d.slug}>
                   <Link
-                    href={`/busca?cidade=${d.slug}`}
+                    href={`/intercambio/${d.slug}`}
                     className="font-display text-[clamp(1.5rem,2.4vw,2.125rem)] font-extrabold tracking-[-0.03em] text-[#8fc1ff] transition-colors hover:text-verde"
                   >
                     {d.cidade}

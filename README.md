@@ -39,6 +39,8 @@ src/
 │   ├── busca/loading.tsx          # Esqueleto de streaming
 │   ├── guia/page.tsx              # Guia do primeiro intercâmbio
 │   ├── kit/page.tsx               # Kit do intercambista (links de afiliado)
+│   ├── intercambio/[cidade]/      # Página de cada cidade (anúncio e Google)
+│   ├── admin/metricas/            # Funil, canais e cliques do kit
 │   ├── cotacao/                   # Pedido de cotação e página do aluno (/cotacao/[token])
 │   ├── responder/[token]/         # Página da agência para responder
 │   ├── admin/cotacoes/            # Painel de revisão (ADMIN_SENHA)
@@ -58,6 +60,7 @@ src/
 │   ├── resumo.ts                  # "A partir de" por cidade e agrupamento do mesmo curso entre agências
 │   ├── cotacoes/                  # Triagem, distribuição, e-mail, repositório (Supabase ou memória)
 │   ├── mercados.ts                # Países de origem: idioma, moeda, DDI
+│   ├── metricas/                  # Origem da visita, eventos e contas do funil
 │   ├── catalogo.ts                # Camada de dados (única que fala com o banco) — server-only
 │   ├── filtros.ts                 # searchParams ⇄ FiltrosBusca (validação)
 │   ├── formatar.ts                # Moeda / semanas
@@ -148,6 +151,30 @@ aceito fica gravado em cada pedido (LGPD, e depois GDPR).
      [Resend](https://resend.com)).
    - `SITE_URL` (ex.: `https://interworld.com.br`), usado nos links dos e-mails.
    - Opcional: `REVISAO_MANUAL=false` para envio automático.
+
+## Piloto da Fase 1: medição e página da cidade
+
+O que o site mede para responder se o InterWorld traz alunos a um custo que vale a pena:
+
+- **De onde veio cada visita.** `components/comum/Rastreio.tsx` guarda por 30 dias a origem (o `utm_source` e o
+  `utm_campaign` do link, ou o site que mandou a pessoa, como Google ou Instagram) e conta cada página vista em
+  `/api/evento`. Sem dado pessoal: só a página, a origem e um id aleatório da aba. Robôs ficam de fora.
+- **Cliques no kit.** Os botões passam por `/api/parceiro/[id]`, que registra o clique e segue para o parceiro.
+- **Pedidos por canal.** Cada pedido de cotação grava a origem de quem pediu.
+- **Quem fechou.** A página do aluno pergunta "Já fechou?" (com qual agência, ainda não, desisti).
+- **Painel `/admin/metricas`** (mesma senha das cotações): o funil de visitantes até a matrícula, a tabela por canal
+  com o gasto digitado e o custo por pedido, e os cliques do kit por parceiro, em 7, 30 ou 90 dias.
+
+Nos anúncios e na bio, use links como `https://seusite.com/intercambio/dublin?utm_source=instagram&utm_campaign=dublin-outubro`.
+
+**Páginas de cidade** (`/intercambio/dublin` e as outras 8): o menor preço por semana, o mesmo curso em agências
+diferentes, as escolas, as regras do país e o kit. Feitas para receber o anúncio e aparecer no Google; o `sitemap.xml` e o
+`robots.txt` já as listam (e deixam de fora o painel e os links secretos).
+
+### Ativar
+
+1. Rode `supabase/migrations/0004_metricas.sql` no Supabase (depois das 0001 a 0003).
+2. Pronto: com a `SUPABASE_SERVICE_ROLE_KEY` na Vercel, os números ficam no banco. Sem ela, ficam só na memória.
 
 ## Kit do intercambista (`/kit`)
 

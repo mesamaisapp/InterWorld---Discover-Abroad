@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { aprovarPedido, fazerLogin, recusarPedido } from "@/app/admin/cotacoes/acoes";
-import { Logo } from "@/components/marca/Logo";
+import { MolduraAdmin } from "@/components/admin/MolduraAdmin";
 import { podeAdministrar } from "@/lib/cotacoes/admin";
 import { descreverPedido, revisaoManual } from "@/lib/cotacoes/fluxo";
 import { repo } from "@/lib/cotacoes/repositorio";
@@ -23,12 +23,18 @@ const ROTULO_STATUS: Record<Pedido["status"], string> = {
   sem_agencias: "Sem agências para o destino",
 };
 
+const ROTULO_DESFECHO: Record<NonNullable<Pedido["desfecho"]>, string> = {
+  fechou: "Fechou",
+  ainda_nao: "Ainda decidindo",
+  desistiu: "Desistiu",
+};
+
 export default async function PainelCotacoes({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const erroLogin = primeiro((await searchParams).erro) === "1";
 
   if (!(await podeAdministrar())) {
     return (
-      <Moldura>
+      <MolduraAdmin>
         <form action={fazerLogin} className="mx-auto flex max-w-sm flex-col gap-4 bg-superficie p-6">
           <h1 className="text-2xl">Painel de cotações</h1>
           {process.env.ADMIN_SENHA ? (
@@ -46,7 +52,7 @@ export default async function PainelCotacoes({ searchParams }: { searchParams: P
             <p>Defina a variável ADMIN_SENHA no servidor para liberar o painel.</p>
           )}
         </form>
-      </Moldura>
+      </MolduraAdmin>
     );
   }
 
@@ -63,7 +69,7 @@ export default async function PainelCotacoes({ searchParams }: { searchParams: P
   const resumo = await r.resumoDoMes(new Date(agora.getFullYear(), agora.getMonth(), 1));
 
   return (
-    <Moldura>
+    <MolduraAdmin atual="/admin/cotacoes">
       <div className="flex flex-col gap-10">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h1 className="text-[clamp(1.75rem,3vw,2.5rem)]">Cotações</h1>
@@ -95,6 +101,10 @@ export default async function PainelCotacoes({ searchParams }: { searchParams: P
                   {p.email && ` · ${p.email}`}
                 </p>
                 {p.observacoes && <p className="text-[0.9375rem] text-suave">“{p.observacoes}”</p>}
+                <p className="text-[0.9375rem] text-suave">
+                  Veio de: {p.origem ?? "direto"}
+                  {p.campanha && ` · ${p.campanha}`}
+                </p>
                 {p.triagem.motivos.length > 0 && (
                   <p className="text-[0.9375rem] text-[#a1281f]">{p.triagem.motivos.join(" · ")}</p>
                 )}
@@ -157,6 +167,13 @@ export default async function PainelCotacoes({ searchParams }: { searchParams: P
                 <span className="rounded-full bg-ceu px-3 py-0.5 text-[0.9375rem] font-semibold">
                   {ROTULO_STATUS[p.status]}
                 </span>
+                {p.desfecho && (
+                  <span
+                    className={`rounded-full px-3 py-0.5 text-[0.9375rem] font-semibold ${p.desfecho === "fechou" ? "bg-verde text-marca-escura" : "bg-ceu"}`}
+                  >
+                    {ROTULO_DESFECHO[p.desfecho]}
+                  </span>
+                )}
                 <span className="text-[0.9375rem] text-suave">{descreverPedido(p)}</span>
                 <a href={`/cotacao/${p.token}`} className="text-[0.9375rem] font-semibold text-marca underline">
                   página do aluno
@@ -167,7 +184,7 @@ export default async function PainelCotacoes({ searchParams }: { searchParams: P
           ))}
         </section>
       </div>
-    </Moldura>
+    </MolduraAdmin>
   );
 }
 
@@ -198,17 +215,4 @@ function Nota({ valor }: { valor: number }) {
         ? "bg-[#ffd166] text-marca-escura"
         : "bg-[#a1281f] text-white";
   return <span className={`numeros rounded-full px-3 py-0.5 text-[0.9375rem] font-semibold ${cor}`}>nota {valor}</span>;
-}
-
-function Moldura({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-svh bg-ceu">
-      <header className="bg-superficie">
-        <div className="mx-auto flex h-[76px] max-w-6xl items-center px-4 sm:px-8">
-          <Logo />
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-8">{children}</main>
-    </div>
-  );
 }
