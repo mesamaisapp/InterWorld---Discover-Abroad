@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useBusca } from "@/components/busca/ContextoBusca";
 import { contarFiltrosAtivos } from "@/lib/filtros";
+import { DESTINOS } from "@/lib/destinos";
 import { formatarEuro } from "@/lib/formatar";
 import { ROTULO_TIPO_CURSO, TIPOS_CURSO, type FaixasCatalogo, type TipoCurso } from "@/types/catalogo";
 
@@ -32,12 +33,12 @@ export function BarraFiltros({ faixas }: { faixas: FaixasCatalogo }) {
       <button
         type="button"
         onClick={() => setAberta(true)}
-        className="mb-4 inline-flex items-center gap-2 rounded-full border border-borda bg-superficie px-4 py-2 text-sm font-medium shadow-sm lg:hidden"
+        className="mb-4 inline-flex h-11 items-center gap-2 rounded-full bg-marca-escura px-5 text-[0.9375rem] font-semibold text-white lg:hidden"
       >
         <IconeFiltro />
         Filtros
         {ativos > 0 && (
-          <span className="grid size-5 place-items-center rounded-full bg-marca text-xs text-white">{ativos}</span>
+          <span className="grid size-6 place-items-center rounded-full bg-verde text-[0.875rem] text-marca-escura">{ativos}</span>
         )}
       </button>
 
@@ -48,13 +49,13 @@ export function BarraFiltros({ faixas }: { faixas: FaixasCatalogo }) {
 
       <aside
         aria-label="Filtros"
-        className={`${aberta ? "visible translate-x-0" : "invisible -translate-x-full"} fixed inset-y-0 left-0 z-50 flex w-[85%] max-w-sm flex-col bg-superficie shadow-xl transition-[translate,visibility] duration-300 lg:visible lg:sticky lg:top-6 lg:bottom-auto lg:z-auto lg:max-h-[calc(100dvh-3rem)] lg:w-auto lg:max-w-none lg:translate-x-0 lg:rounded-2xl lg:border lg:border-borda lg:shadow-none lg:transition-none`}
+        className={`${aberta ? "visible translate-x-0" : "invisible -translate-x-full"} fixed inset-y-0 left-0 z-50 flex w-[85%] max-w-sm flex-col bg-superficie shadow-xl transition-[translate,visibility] duration-300 lg:visible lg:sticky lg:top-6 lg:bottom-auto lg:z-auto lg:max-h-[calc(100dvh-3rem)] lg:w-auto lg:max-w-none lg:translate-x-0 lg:bg-superficie lg:shadow-none lg:transition-none`}
       >
-        <div className="flex items-center justify-between border-b border-borda px-5 py-4">
-          <h2 className="text-base font-semibold">Filtros</h2>
+        <div className="flex items-center justify-between px-5 pt-5 pb-2">
+          <h2 className="text-2xl">Filtros</h2>
           <div className="flex items-center gap-3">
             {ativos > 0 && (
-              <button type="button" onClick={limpar} className="text-sm font-medium text-marca hover:underline">
+              <button type="button" onClick={limpar} className="text-[0.9375rem] font-semibold text-marca hover:underline">
                 Limpar
               </button>
             )}
@@ -73,15 +74,26 @@ export function BarraFiltros({ faixas }: { faixas: FaixasCatalogo }) {
           <Grupo titulo="Destino" htmlFor="filtro-destino">
             <select
               id="filtro-destino"
-              value={filtros.destino ?? ""}
-              onChange={(e) => atualizar({ destino: e.target.value || undefined })}
-              className="campo"
+              value={filtros.cidade ? `cidade:${filtros.cidade}` : filtros.destino ? `pais:${filtros.destino}` : ""}
+              onChange={(e) => {
+                const [tipo, slug] = e.target.value.split(":");
+                atualizar({
+                  destino: tipo === "pais" ? slug : undefined,
+                  cidade: tipo === "cidade" ? slug : undefined,
+                });
+              }}
+              className="campo font-semibold"
             >
-              <option value="">Todos os destinos</option>
+              <option value="">Qualquer destino</option>
               {faixas.paises.map((p) => (
-                <option key={p.id} value={p.slug}>
-                  {p.nome}
-                </option>
+                <optgroup key={p.id} label={p.nome}>
+                  <option value={`pais:${p.slug}`}>Todo o país: {p.nome}</option>
+                  {DESTINOS.filter((d) => d.pais_slug === p.slug).map((d) => (
+                    <option key={d.slug} value={`cidade:${d.slug}`}>
+                      {d.cidade}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </Grupo>
@@ -102,12 +114,12 @@ export function BarraFiltros({ faixas }: { faixas: FaixasCatalogo }) {
           <Grupo titulo="Tipo de curso">
             <div className="space-y-2.5">
               {TIPOS_CURSO.map((tipo) => (
-                <label key={tipo} className="flex cursor-pointer items-center gap-3 text-sm">
+                <label key={tipo} className="flex cursor-pointer items-center gap-3 text-[0.9375rem]">
                   <input
                     type="checkbox"
                     checked={filtros.tipos.includes(tipo)}
                     onChange={() => alternarTipo(tipo)}
-                    className="size-4 rounded accent-marca"
+                    className="size-5 rounded accent-marca"
                   />
                   {ROTULO_TIPO_CURSO[tipo]}
                 </label>
@@ -123,23 +135,23 @@ export function BarraFiltros({ faixas }: { faixas: FaixasCatalogo }) {
             onConfirmar={(v) => atualizar({ orcamentoMax: v })}
           />
 
-          <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+          <label className="flex cursor-pointer items-center justify-between gap-3 text-[0.9375rem] font-semibold">
             Com acomodação inclusa
             <input
               type="checkbox"
               role="switch"
               checked={filtros.comAcomodacao}
               onChange={(e) => atualizar({ comAcomodacao: e.target.checked })}
-              className="size-4 accent-marca"
+              className="size-5 accent-marca"
             />
           </label>
         </div>
 
-        <div className="border-t border-borda p-4 lg:hidden">
+        <div className="p-4 lg:hidden">
           <button
             type="button"
             onClick={() => setAberta(false)}
-            className="w-full rounded-xl bg-marca py-3 text-sm font-semibold text-white"
+            className="h-12 w-full rounded-full bg-marca-escura font-semibold text-white"
           >
             Ver resultados
           </button>
@@ -171,7 +183,7 @@ function SliderOrcamento({
 
   return (
     <Grupo titulo="Orçamento máximo" htmlFor="filtro-orcamento">
-      <div className="mb-2 text-sm font-semibold text-marca">
+      <div className="numeros mb-2 font-display text-lg font-extrabold">
         {local >= maximo ? "Sem limite" : `Até ${formatarEuro(local)}`}
       </div>
       <input
@@ -184,7 +196,7 @@ function SliderOrcamento({
         onChange={(e) => setLocal(Number(e.target.value))}
         className="w-full accent-marca"
       />
-      <div className="mt-1 flex justify-between text-xs text-suave">
+      <div className="numeros mt-1 flex justify-between text-[0.9375rem] text-suave">
         <span>{formatarEuro(500)}</span>
         <span>{formatarEuro(maximo)}</span>
       </div>
@@ -196,7 +208,7 @@ function Grupo({ titulo, htmlFor, children }: { titulo: string; htmlFor?: string
   const Rotulo = htmlFor ? "label" : "h3";
   return (
     <section>
-      <Rotulo htmlFor={htmlFor} className="mb-3 block text-xs font-semibold uppercase tracking-wide text-suave">
+      <Rotulo htmlFor={htmlFor} className="mb-3 block font-sans text-[0.9375rem] font-bold tracking-normal">
         {titulo}
       </Rotulo>
       {children}
@@ -210,8 +222,8 @@ function Chip({ ativo, onClick, children }: { ativo: boolean; onClick: () => voi
       type="button"
       aria-pressed={ativo}
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-        ativo ? "border-marca bg-marca text-white" : "border-borda hover:border-marca hover:text-marca"
+      className={`numeros rounded-full px-3.5 py-2 text-[0.9375rem] font-semibold transition-[background-color,color,scale] duration-150 active:scale-95 ${
+        ativo ? "bg-marca-escura text-white" : "bg-ceu hover:bg-[#d3e2f6] lg:bg-ceu lg:hover:bg-[#d3e2f6]"
       }`}
     >
       {children}

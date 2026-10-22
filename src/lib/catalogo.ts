@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { supabaseServidor } from "@/lib/supabase/servidor";
 import { PACOTES_EXEMPLO, PAISES_EXEMPLO } from "@/lib/dados-exemplo";
+import { destinoPorSlug } from "@/lib/destinos";
 import type { FaixasCatalogo, FiltrosBusca, Ordenacao, PacoteBusca } from "@/types/catalogo";
 
 const COLUNA_ORDENACAO: Record<Ordenacao, keyof PacoteBusca> = {
@@ -11,6 +12,7 @@ const COLUNA_ORDENACAO: Record<Ordenacao, keyof PacoteBusca> = {
 };
 
 const LIMITE_RESULTADOS = 60;
+const LIMITE_CATALOGO = 2000;
 
 /** Busca pacotes aplicando os filtros no banco (view `pacotes_busca`). */
 export async function buscarPacotes(filtros: FiltrosBusca): Promise<PacoteBusca[]> {
@@ -19,6 +21,8 @@ export async function buscarPacotes(filtros: FiltrosBusca): Promise<PacoteBusca[
 
   let query = supabase.from("pacotes_busca").select("*");
   if (filtros.destino) query = query.eq("pais_slug", filtros.destino);
+  const cidade = destinoPorSlug(filtros.cidade)?.cidade;
+  if (cidade) query = query.eq("escola_cidade", cidade);
   if (filtros.semanas) query = query.eq("semanas", filtros.semanas);
   if (filtros.tipos.length) query = query.in("tipo_curso", filtros.tipos);
   if (filtros.orcamentoMax) query = query.lte("preco_eur", filtros.orcamentoMax);
@@ -29,7 +33,21 @@ export async function buscarPacotes(filtros: FiltrosBusca): Promise<PacoteBusca[
     .limit(LIMITE_RESULTADOS);
 
   if (error) throw new Error(`Falha ao buscar pacotes: ${error.message}`);
-  // numeric chega como string pelo PostgREST
+  return normalizar(data);
+}
+
+/** Todo o catálogo ativo, para os resumos da página inicial (preço "a partir de", comparações). */
+export const buscarCatalogo = cache(async (): Promise<PacoteBusca[]> => {
+  const supabase = supabaseServidor();
+  if (!supabase) return PACOTES_EXEMPLO;
+
+  const { data, error } = await supabase.from("pacotes_busca").select("*").limit(LIMITE_CATALOGO);
+  if (error) throw new Error(`Falha ao buscar o catálogo: ${error.message}`);
+  return normalizar(data);
+});
+
+// numeric chega como string pelo PostgREST
+function normalizar(data: PacoteBusca[] | null): PacoteBusca[] {
   return (data ?? []).map((p) => ({
     ...p,
     preco_eur: Number(p.preco_eur),
@@ -68,6 +86,15 @@ export async function buscarPacote(id: string) {
   return data;
 }
 
+/** Um pacote completo pelo id (formulário de cotação que vem de um bilhete). */
+export async function buscarPacoteCompleto(id: string): Promise<PacoteBusca | null> {
+  if (!id) return null;
+  const supabase = supabaseServidor();
+  if (!supabase) return PACOTES_EXEMPLO.find((p) => p.id === id) ?? null;
+  const { data } = await supabase.from("pacotes_busca").select("*").eq("id", id).maybeSingle();
+  return data ? normalizar([data])[0] : null;
+}
+
 export async function registrarClique(pacoteId: string, referer: string | null, userAgent: string | null) {
   const supabase = supabaseServidor();
   if (!supabase) return;
@@ -90,10 +117,12 @@ function faixasDe(pacotes: Pick<PacoteBusca, "semanas" | "preco_eur">[], paises:
 
 function filtrarEmMemoria(pacotes: PacoteBusca[], f: FiltrosBusca) {
   const coluna = COLUNA_ORDENACAO[f.ordenar];
+  const cidade = destinoPorSlug(f.cidade)?.cidade;
   return pacotes
     .filter(
       (p) =>
         (!f.destino || p.pais_slug === f.destino) &&
+        (!cidade || p.escola_cidade === cidade) &&
         (!f.semanas || p.semanas === f.semanas) &&
         (!f.tipos.length || f.tipos.includes(p.tipo_curso)) &&
         (!f.orcamentoMax || p.preco_eur <= f.orcamentoMax) &&

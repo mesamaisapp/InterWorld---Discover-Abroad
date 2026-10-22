@@ -1,37 +1,197 @@
 @import "tailwindcss";
 
+/* Cores da logo InterWorld: "inter" marinho, "world" azul, continentes verdes. */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat Variable", "Public Sans Variable", ui-sans-serif, sans-serif;
 
-  --color-fundo: #f6f7f9;
+  --color-fundo: #ffffff;
   --color-superficie: #ffffff;
-  --color-borda: #e4e7ec;
-  --color-texto: #101828;
-  --color-suave: #667085;
-  --color-marca: #1d4ed8;
-  --color-marca-escura: #1e40af;
-  --color-destaque: #059669;
-}
+  --color-ceu: #e6eef9; /* um passo de tom acima do branco */
+  --color-borda: #cfdbeb;
+  --color-texto: #0b2551;
+  --color-suave: #44587c;
+  --color-marca: #1565c0;
+  --color-marca-escura: #0b2551;
+  --color-verde: #5cb746;
+  --color-destaque: #22722a; /* verde legível sobre branco */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fundo: #0b0f17;
-    --color-superficie: #121826;
-    --color-borda: #243041;
-    --color-texto: #e6e9ef;
-    --color-suave: #98a2b3;
-    --color-marca: #3b82f6;
-    --color-marca-escura: #2563eb;
-    --color-destaque: #10b981;
-  }
+  --ease-saida: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     @apply bg-fundo font-sans text-texto antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-marca);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-verde);
+    color: var(--color-texto);
   }
 }
 
 @utility campo {
-  @apply w-full rounded-xl border border-borda bg-superficie px-3 py-2.5 text-sm outline-none focus:border-marca focus:ring-2 focus:ring-marca/20;
+  @apply w-full rounded-lg border border-borda bg-superficie px-3 py-2.5 text-base outline-none focus:border-marca focus:ring-2 focus:ring-marca/20;
+}
+
+@utility numeros {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cartão de embarque: recortes meia-lua no ponto da picotagem (--corte, a partir da esquerda). */
+@utility bilhete {
+  --raio: 16px;
+  mask:
+    radial-gradient(circle var(--raio) at var(--corte, 70%) 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle var(--raio) at var(--corte, 70%) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+}
+
+/* No celular o bilhete fica em pé: o recorte vai para as laterais, na altura --corte-y. */
+@utility bilhete-em-pe {
+  --raio: 14px;
+  mask:
+    radial-gradient(circle var(--raio) at 0 var(--corte-y, 70%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--raio) at 100% var(--corte-y, 70%), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* Linha picotada: bolinhas redondas de 4px */
+@utility picote-v {
+  background-image: radial-gradient(circle, var(--color-borda) 2px, transparent 2.5px);
+  background-size: 4px 12px;
+  background-repeat: repeat-y;
+  width: 4px;
+}
+@utility picote-h {
+  background-image: radial-gradient(circle, var(--color-borda) 2px, transparent 2.5px);
+  background-size: 12px 4px;
+  background-repeat: repeat-x;
+  height: 4px;
+}
+
+/* Pontilhado de itinerário entre o passo e o tempo */
+@utility guia {
+  flex: 1;
+  min-width: 1.5rem;
+  height: 4px;
+  margin-inline: 0.5rem;
+  align-self: center;
+  background-image: radial-gradient(circle, currentColor 1.6px, transparent 2px);
+  background-size: 10px 4px;
+  background-repeat: repeat-x;
+  opacity: 0.45;
+}
+
+/* Corte em zigue-zague na base do recibo */
+@utility zigue {
+  --d: 14px;
+  clip-path: polygon(
+    0 0, 100% 0, 100% calc(100% - var(--d)),
+    95% 100%, 90% calc(100% - var(--d)), 85% 100%, 80% calc(100% - var(--d)), 75% 100%,
+    70% calc(100% - var(--d)), 65% 100%, 60% calc(100% - var(--d)), 55% 100%, 50% calc(100% - var(--d)),
+    45% 100%, 40% calc(100% - var(--d)), 35% 100%, 30% calc(100% - var(--d)), 25% 100%,
+    20% calc(100% - var(--d)), 15% 100%, 10% calc(100% - var(--d)), 5% 100%, 0 calc(100% - var(--d))
+  );
+}
+
+/* Entradas: o conteúdo nasce visível; o script só anima o que ainda está fora da tela. */
+.revelar-pronto [data-revelar] {
+  opacity: 0;
+  translate: 0 24px;
+}
+.revelar-pronto [data-revelar].revelado {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 600ms var(--ease-saida),
+    translate 700ms var(--ease-saida);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+/* Código do aeroporto trocando, como no painel de embarque */
+@keyframes virar {
+  from {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+}
+.virar {
+  display: inline-block;
+  transform-origin: 50% 60%;
+  animation: virar 420ms var(--ease-saida) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pulo {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pulo {
+  animation: pulo 360ms var(--ease-saida);
+}
+
+@keyframes respirar {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.09);
+  }
+}
+.foto-viva {
+  animation: respirar 18s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .revelar-pronto [data-revelar] {
+    opacity: 1;
+    translate: none;
+  }
+  .virar,
+  .pulo,
+  .foto-viva {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+  }
 }
